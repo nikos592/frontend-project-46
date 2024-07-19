@@ -1,0 +1,19 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "Node.js boilerplate package",
+  "main": "src/gendiff.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikos592/frontend-project-46.git"
+  },
+  "author": "nikos592",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikos592/frontend-project-46/issues"
+  },
+  "homepage": "https://github.com/nikos592/frontend-project-46#readme"
+}
