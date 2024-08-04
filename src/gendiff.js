@@ -2,7 +2,7 @@
 
 import { Command } from 'commander';
 import { createRequire } from 'module';
-import generateDiff from './generateDiff.js';
+import genDiff from './index.js';
 
 const require = createRequire(import.meta.url);
 
@@ -28,7 +28,7 @@ if (!filepath1 || !filepath2) {
 }
 
 try {
-  generateDiff(filepath1, filepath2);
+  genDiff(filepath1, filepath2);
 } catch (error) {
   console.error('Error comparing files:', error.message);
   process.exit(1);

@@ -1,25 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-import yaml from 'js-yaml';
-import ini from 'ini';
 import _ from 'lodash';
-
-export const parseFile = (filePath) => {
-  const data = fs.readFileSync(filePath, 'utf8');
-  const extension = path.extname(filePath).toLowerCase();
-
-  switch (extension) {
-    case '.json':
-      return JSON.parse(data);
-    case '.yaml':
-    case '.yml':
-      return yaml.load(data);
-    case '.ini':
-      return ini.parse(data);
-    default:
-      throw new Error(`Unsupported file format: ${extension}`);
-  }
-};
 
 const isObject = (value) => value && typeof value === 'object' && !Array.isArray(value);
 
@@ -49,11 +28,4 @@ const buildDiff = (obj1, obj2, depth = 1) => {
   return `{\n${lines.join('\n')}\n${' '.repeat((depth - 1) * 4)}}`;
 };
 
-const generateDiff = (filePath1, filePath2) => {
-  const data1 = parseFile(filePath1);
-  const data2 = parseFile(filePath2);
-
-  console.log(buildDiff(data1, data2));
-};
-
-export default generateDiff;
+export default buildDiff;

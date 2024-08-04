@@ -1,4 +1,5 @@
 {
-  "name": "Doe",
-  "age": 30
+  "name": "John",
+  "age": 30,
+  "city": "Los Angeles"
 }
