@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
-const { Command } = require('commander');
-const { version } = require('../package.json');
-const { generateDiff } = require('./generateDiff.js');
+import { Command } from 'commander';
+import { createRequire } from 'module';
+import generateDiff from './generateDiff.js';
+
+const require = createRequire(import.meta.url);
+
+const { version } = require('../package');
 
 const program = new Command();
 
@@ -10,13 +14,12 @@ program
   .name('gendiff')
   .description('Compares two configuration files and shows a difference')
   .version(version, '-V, --version', 'output the version number')
-  .option('-f, --format [type]', 'output format') 
+  .option('-f, --format [type]', 'output format')
   .helpOption('-h, --help', 'output usage information')
   .usage('[options] <filepath1> <filepath2>');
 
 program.parse(process.argv);
 
-const options = program.opts();
 const [filepath1, filepath2] = program.args;
 
 if (!filepath1 || !filepath2) {
