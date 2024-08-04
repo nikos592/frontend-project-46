@@ -4,7 +4,7 @@ import yaml from 'js-yaml';
 import ini from 'ini';
 import _ from 'lodash';
 
-const parseFile = (filePath) => {
+export const parseFile = (filePath) => {
   const data = fs.readFileSync(filePath, 'utf8');
   const extension = path.extname(filePath).toLowerCase();
 
