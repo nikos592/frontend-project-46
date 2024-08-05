@@ -8,9 +8,12 @@
     "lint:fix": "eslint . --fix",
     "test": "jest --coverage"
   },
-     "jest": {
-       "coverageReporters": ["lcov", "text"]
-     },
+  "jest": {
+    "coverageReporters": [
+      "lcov",
+      "text"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nikos592/frontend-project-46.git"
@@ -23,6 +26,7 @@
   "type": "module",
   "homepage": "https://github.com/nikos592/frontend-project-46#readme",
   "dependencies": {
+    "commander": "^12.1.0",
     "ini": "^4.1.3",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21"
