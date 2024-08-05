@@ -16,9 +16,10 @@ jobs:
         node-version: [20.x]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out the repository
+        uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Install Node.js for the main workflow
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -30,16 +31,18 @@ jobs:
 
       - run: make test
 
-      - name: Override Node version for CodeClimate action
-        run: |
-          echo "Installing Node 20 for CodeClimate action"
-          nvm install 20.0.0
-          nvm use 20.0.0
-          echo "node $(node -v)"
-        shell: bash
+      - name: Setup Node.js 20 for CodeClimate
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - name: Test & publish code coverage
-        run: |
-          npx codeclimate-test-reporter < cover/lcov.info
+      - name: Run CodeClimate
+        uses: paambaati/codeclimate-action@v5.0.0
         env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}  
+
+      - name: Restore Node.js for further steps if needed
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
