@@ -30,11 +30,16 @@ jobs:
 
       - run: make test
 
+      - name: Override Node version for CodeClimate action
+        run: |
+          echo "Installing Node 20 for CodeClimate action"
+          nvm install 20.0.0
+          nvm use 20.0.0
+          echo "node $(node -v)"
+        shell: bash
+
       - name: Test & publish code coverage
-        uses: paambaati/codeclimate-action@v5.0.0
-        with:
-          debug: true
-          coverageCommand: 'npm test -- --coverage'
-          coverageLocations: 'coverage/lcov.info'
+        run: |
+          npx codeclimate-test-reporter < cover/lcov.info
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
