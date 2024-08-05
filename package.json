@@ -8,6 +8,9 @@
     "lint:fix": "eslint . --fix",
     "test": "jest --coverage"
   },
+     "jest": {
+       "coverageReporters": ["lcov", "text"]
+     },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nikos592/frontend-project-46.git"
