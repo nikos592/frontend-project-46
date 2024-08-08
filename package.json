@@ -1,8 +1,11 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
+  "bin": {
+    "gendiff": "bin/gendiff.js"
+  },
   "description": "Node.js boilerplate package",
-  "main": "src/index.js",
+  "main": "bin/gendiff.js",
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

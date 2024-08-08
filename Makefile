@@ -2,7 +2,7 @@ install:
 	npm ci
 
 gendiff:
-	node src/gendiff.js
+	node bin/gendiff.js
 
 .PHONY: test
 
