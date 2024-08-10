@@ -1,21 +1,15 @@
-import fs from 'fs';
-import path from 'path';
 import yaml from 'js-yaml';
-import ini from 'ini';
 
-const parseFile = (filePath) => {
-  const data = fs.readFileSync(filePath, 'utf8');
-  const extension = path.extname(filePath).toLowerCase();
-  switch (extension) {
+const parseFile = (data, format) => {
+  switch (format) {
     case '.json':
       return JSON.parse(data);
     case '.yaml':
+      return yaml.load(data);
     case '.yml':
       return yaml.load(data);
-    case '.ini':
-      return ini.parse(data);
     default:
-      throw new Error(`Unsupported file format: ${extension}`);
+      throw new Error(`incorrect file extension: ${format}!`);
   }
 };
 
