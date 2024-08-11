@@ -1,43 +1,38 @@
 import _ from 'lodash';
 
-const stringify = (value) => {
-  if (_.isObject(value) && !_.isArray(value)) {
+const printValue = (value) => {
+  if (_.isObject(value)) {
     return '[complex value]';
-  }
-  if (typeof value === 'string') {
+  } if (typeof value === 'string') {
     return `'${value}'`;
   }
-  return String(value);
+  return value;
 };
 
 const plain = (tree) => {
-  const iter = (nodes, path) => {
-    const lines = nodes.flatMap((node) => {
-      const {
-        key, type, value, children, value1, value2,
-      } = node;
-      const fullPath = path ? `${path}.${key}` : key;
-
-      switch (type) {
-        case 'added':
-          return `Property '${fullPath}' was added with value: ${stringify(value)}`;
-        case 'removed':
-          return `Property '${fullPath}' was removed`;
-        case 'changed':
-          return `Property '${fullPath}' was updated. From ${stringify(value1)} to ${stringify(value2)}`;
-        case 'nested':
-          return iter(children, fullPath);
-        case 'unchanged':
-          return [];
-        default:
-          throw new Error(`Unknown type: ${type}`);
-      }
-    });
-
-    return lines;
+  const cb = (node, result = '', path = '') => {
+    const {
+      key, value, type, newValue, children,
+    } = node;
+    const nodeName = `${path}${key}`.slice(1);
+    const printedValue = printValue(value);
+    const printedNewValue = printValue(newValue);
+    switch (type) {
+      case 'root':
+        return children.map((item) => cb(item, result, `${path}${key}.`)).join('\n');
+      case 'nested':
+        return children.flatMap((item) => cb(item, result, `${path}${key}.`)).join('\n');
+      case 'added':
+        return `${result}Property '${nodeName}' was added with value: ${printedValue}`;
+      case 'removed':
+        return `${result}Property '${nodeName}' was removed`;
+      case 'updated':
+        return `${result}Property '${nodeName}' was updated. From ${printedValue} to ${printedNewValue}`;
+      default:
+        return [];
+    }
   };
-
-  return iter(tree, '').join('\n');
+  return cb(tree);
 };
 
 export default plain;

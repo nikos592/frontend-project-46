@@ -1,62 +1,52 @@
 import _ from 'lodash';
 
-const spaceSize = 4;
+const spaceSize = 2;
+const depthSpaceSize = 4;
 
-const indent = (depth) => ' '.repeat(spaceSize * depth);
-
-const stringify = (value, depth) => {
+const stringify = (value, replacer = ' ', spaceCount = 1) => {
   if (!_.isObject(value)) {
     return `${value}`;
   }
-
-  const lines = Object.entries(value).map(([key, val]) => {
-    const stringifyVal = stringify(val, depth + 1);
-    return `${indent(depth + 1)}${key}: ${stringifyVal}`;
-  });
-
-  return `{\n${lines.join('\n')}\n${indent(depth)}}`;
+  const cb = (currentValue, replaceInner, depth) => {
+    const entries = Object.entries(currentValue);
+    return entries.reduce((acc, [key, val]) => {
+      const newAcc = typeof val !== 'object' ? `${replaceInner.repeat(depth)}${key}: ${val}\n` : `${replaceInner.repeat(depth)}${key}: ${cb(val, replaceInner, depth + depthSpaceSize)}${replaceInner.repeat(depth)}}\n`;
+      return acc + newAcc;
+    }, '{\n');
+  };
+  return `${cb(value, replacer, spaceCount)}${' '.repeat(spaceCount - depthSpaceSize)}}`;
 };
 
-const makeLine = (key, value, sign, depth) => {
-  const ind = ' '.repeat(spaceSize * depth - 2);
-  return `${ind}${sign} ${key}: ${stringify(value, depth)}`;
+const makeLine = (item, depth) => {
+  if (item.type === 'nested') {
+    return `${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}  ${item.key}: {\n`;
+  }
+  return '';
 };
 
 const stylish = (tree) => {
-  const iter = (nodes, depth) => {
-    const lines = nodes.map((node) => {
-      const {
-        key, type, value, newValue, oldValue, children,
-      } = node;
-
-      switch (type) {
-        case 'nested':
-          return `${indent(depth)}${key}: {\n${iter(children, depth + 1)}\n${indent(depth)}}`;
-
-        case 'added':
-          return makeLine(key, value, '+', depth);
-
-        case 'removed':
-          return makeLine(key, value, '-', depth);
-
-        case 'unchanged':
-          return makeLine(key, value, ' ', depth);
-
-        case 'changed':
-          return [
-            makeLine(key, oldValue, '-', depth),
-            makeLine(key, newValue, '+', depth),
-          ].join('\n');
-
-        default:
-          throw new Error(`Unknown node type: ${type}`);
-      }
-    });
-
-    return lines.join('\n');
+  const cb = (data, result = '', depth = 0) => {
+    const {
+      key, value, type, newValue, children,
+    } = data;
+    const printValue = stringify(value, ' ', (depth + 1) * depthSpaceSize);
+    const printNewValue = stringify(newValue, ' ', (depth + 1) * depthSpaceSize);
+    switch (type) {
+      case 'root':
+        return `{\n${result}${children.map((item) => cb(item, makeLine(item, depth + 1), depth + 1)).join('\n')}\n${' '.repeat(spaceSize * depth * spaceSize)}}`;
+      case 'nested':
+        return `${result}${children.map((item) => cb(item, makeLine(item, depth + 1), depth + 1)).join('\n')}\n${' '.repeat(spaceSize * depth * spaceSize)}}`;
+      case 'updated':
+        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}- ${key}: ${printValue}\n${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}+ ${key}: ${printNewValue}`;
+      case 'added':
+        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}+ ${key}: ${printValue}`;
+      case 'removed':
+        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}- ${key}: ${printValue}`;
+      default:
+        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}  ${key}: ${printValue}`;
+    }
   };
-
-  return `{\n${iter(tree, 1)}\n}`;
+  return cb(tree);
 };
 
 export default stylish;
