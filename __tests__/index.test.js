@@ -18,8 +18,8 @@ describe.each([
   test(`returns ${expected}`, () => {
     const filePathA = getFixturePath(a);
     const filePathB = getFixturePath(b);
-    const expectedOutput = fs.readFileSync(getFixturePath(expected), 'utf-8');
+    const expectedOutput = fs.readFileSync(getFixturePath(expected), 'utf-8').trim();
 
-    expect(genDiff(filePathA, filePathB, c)).toBe(expectedOutput);
+    expect(genDiff(filePathA, filePathB, c)).toEqual(expectedOutput);
   });
 });
