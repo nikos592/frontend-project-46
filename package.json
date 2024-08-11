@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "npx jest --runInBand --bail --coverage"
+    "test": "npx jest --colors --runInBand --bail"
   },
   "jest": {
     "coverageReporters": [
