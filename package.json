@@ -5,7 +5,7 @@
     "gendiff": "bin/gendiff.js"
   },
   "description": "Node.js boilerplate package",
-  "main": "bin/gendiff.js",
+  "main": "src/index.js",
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
