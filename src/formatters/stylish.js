@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const indent = (depth, spacesCount = 4) => ' '.repeat(depth * spacesCount);
+const indent = (depth, spacesCount = 3) => ' '.repeat(depth * spacesCount);
 
 const formatValue = (currentValue, depth) => {
   if (!_.isPlainObject(currentValue)) {
