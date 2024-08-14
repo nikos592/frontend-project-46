@@ -1,15 +1,20 @@
 import _ from 'lodash';
 
-const indent = (depth) => '    '.repeat(depth);
+const indent = (depth, spacesCount = 4) => ' '.repeat(depth * spacesCount);
 
-const formatValue = (value, depth) => {
-  if (!_.isPlainObject(value)) {
-    return value;
+const formatValue = (currentValue, depth) => {
+  if (!_.isPlainObject(currentValue)) {
+    return currentValue;
   }
-  const entries = Object.entries(value).map(
-    ([key, val]) => `${indent(depth + 1)}${key}: ${formatValue(val, depth + 1)}`,
-  );
-  return `{\n${entries.join('\n')}\n${indent(depth)}}`;
+  const bracketIndent = indent(depth - 1);
+  const lines = Object.entries(currentValue)
+    .map(([key, val]) => `${indent(depth)}${key}: ${formatValue(val, depth + 1)}`);
+
+  return [
+    '{',
+    ...lines,
+    `${bracketIndent}}`,
+  ].join('\n');
 };
 
 const makeStylish = (tree, depth = 1) => {
