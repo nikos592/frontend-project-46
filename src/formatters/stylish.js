@@ -1,52 +1,35 @@
 import _ from 'lodash';
 
-const spaceSize = 2;
-const depthSpaceSize = 4;
+const indent = (depth) => '  '.repeat(depth);
 
-const stringify = (value, replacer = ' ', spaceCount = 1) => {
-  if (!_.isObject(value)) {
-    return `${value}`;
+const formatValue = (value, depth) => {
+  if (!_.isPlainObject(value)) {
+    return value;
   }
-  const cb = (currentValue, replaceInner, depth) => {
-    const entries = Object.entries(currentValue);
-    return entries.reduce((acc, [key, val]) => {
-      const newAcc = typeof val !== 'object' ? `${replaceInner.repeat(depth)}${key}: ${val}\n` : `${replaceInner.repeat(depth)}${key}: ${cb(val, replaceInner, depth + depthSpaceSize)}${replaceInner.repeat(depth)}}\n`;
-      return acc + newAcc;
-    }, '{\n');
-  };
-  return `${cb(value, replacer, spaceCount)}${' '.repeat(spaceCount - depthSpaceSize)}}`;
+  const entries = Object.entries(value).map(
+    ([key, val]) => `${indent(depth + 1)}${key}: ${formatValue(val, depth + 1)}`
+  );
+  return `{\n${entries.join('\n')}\n${indent(depth)}}`;
 };
 
-const makeLine = (item, depth) => {
-  if (item.type === 'nested') {
-    return `${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}  ${item.key}: {\n`;
-  }
-  return '';
-};
-
-const stylish = (tree) => {
-  const cb = (data, result = '', depth = 0) => {
-    const {
-      key, value, type, newValue, children,
-    } = data;
-    const printValue = stringify(value, ' ', (depth + 1) * depthSpaceSize);
-    const printNewValue = stringify(newValue, ' ', (depth + 1) * depthSpaceSize);
-    switch (type) {
-      case 'root':
-        return `{\n${result}${children.map((item) => cb(item, makeLine(item, depth + 1), depth + 1)).join('\n')}\n${' '.repeat(spaceSize * depth * spaceSize)}}`;
+const makeStylish = (tree, depth = 1) => {
+  const result = tree.children.map((node) => {
+    switch (node.type) {
       case 'nested':
-        return `${result}${children.map((item) => cb(item, makeLine(item, depth + 1), depth + 1)).join('\n')}\n${' '.repeat(spaceSize * depth * spaceSize)}}`;
+        return `${indent(depth)}${node.key}: {\n${makeStylish(node, depth + 2)}\n${indent(depth + 1)}}`;
+      case 'unchanged':
+        return `${indent(depth)}${node.key}: ${formatValue(node.value, depth + 2)}`;
       case 'updated':
-        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}- ${key}: ${printValue}\n${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}+ ${key}: ${printNewValue}`;
-      case 'added':
-        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}+ ${key}: ${printValue}`;
+        return `${indent(depth)}- ${node.key}: ${formatValue(node.value, depth + 2)}\n${indent(depth)}+ ${node.key}: ${formatValue(node.newValue, depth + 2)}`;
       case 'removed':
-        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}- ${key}: ${printValue}`;
+        return `${indent(depth)}- ${node.key}: ${formatValue(node.value, depth + 2)}`;
+      case 'added':
+        return `${indent(depth)}+ ${node.key}: ${formatValue(node.value, depth + 2)}`;
       default:
-        return `${result}${' '.repeat(depthSpaceSize * (depth - 1) + spaceSize)}  ${key}: ${printValue}`;
+        throw new Error(`Unknown type: ${node.type}`);
     }
-  };
-  return cb(tree);
+  });
+  return result.join('\n');
 };
 
-export default stylish;
+export default (tree) => `{\n${makeStylish(tree, 1)}\n}`;
