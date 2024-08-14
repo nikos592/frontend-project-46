@@ -29,6 +29,6 @@ describe('parseFile', () => {
     const data = 'name: John\nage: 30';
     const format = '.txt';
 
-    expect(() => parseFile(data, format)).toThrowError(`incorrect file extension: ${format}!`);
+    expect(() => parseFile(data, format)).toThrow(`incorrect file extension: ${format}!`);
   });
 });
