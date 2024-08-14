@@ -22,7 +22,7 @@ const makeTree = (keys, parsedData1, parsedData2) => keys.map((el) => {
     const subKeys2 = _.get(parsedData2, el);
     const innerKeys = _.union(Object.keys(subKeys1), Object.keys(subKeys2));
     const sortedKeys = _.sortBy(innerKeys);
-    return makeNode(el, 'nested', makeTree(sortedKeys, subKeys1, subKeys2, []));
+    return makeNode(el, 'nested', makeTree(sortedKeys, subKeys1, subKeys2));
   }
   if (_.get(parsedData1, el) === _.get(parsedData2, el)) {
     return makeNode(el, 'unchanged', [], parsedData2[el]);
