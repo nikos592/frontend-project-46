@@ -42,6 +42,6 @@ describe('genDiff Error handling', () => {
 describe('formatData', () => {
   const mockTree = { key: 'value' };
   it('should throw an error when an invalid formatName is provided', () => {
-    expect(() => formatData('invalid', mockTree)).toThrowError('incorrect format: invalid!');
+    expect(() => formatData('invalid', mockTree)).toThrow('incorrect format: invalid!');
   });
 });
