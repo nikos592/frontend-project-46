@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { fileURLToPath } from 'url';
 import genDiff from '../src/index.js';
+import formatData from '../src/formatters/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,5 +22,26 @@ describe.each([
     const expectedOutput = fs.readFileSync(getFixturePath(expected), 'utf-8').trim();
 
     expect(genDiff(filePathA, filePathB, c)).toEqual(expectedOutput);
+  });
+});
+
+describe('genDiff Error handling', () => {
+  test('throws an error if file does not exist', () => {
+    const filepath1 = 'nonExistent1.json';
+    const filepath2 = 'nonExistent2.json';
+    expect(() => genDiff(filepath1, filepath2)).toThrow();
+  });
+
+  test('throws an error if file format is invalid', () => {
+    const invalidJson = getFixturePath('invalid.json');
+    const validJson = getFixturePath('file1.json');
+    expect(() => genDiff(invalidJson, validJson)).toThrow();
+  });
+});
+
+describe('formatData', () => {
+  const mockTree = { key: 'value' };
+  it('should throw an error when an invalid formatName is provided', () => {
+    expect(() => formatData('invalid', mockTree)).toThrowError('incorrect format: invalid!');
   });
 });

@@ -35,7 +35,7 @@ const makeTree = (keys, parsedData1, parsedData2) => keys.map((el) => {
   return makeNode(el, 'added', [], parsedData2[el]);
 });
 
-const buildTree = (parsedData1, parsedData2) => {
+const buildAST = (parsedData1, parsedData2) => {
   const keys = _.union(Object.keys(parsedData1), Object.keys(parsedData2));
   const sortedGroups = _.sortBy(keys);
   const res = makeTree(sortedGroups, parsedData1, parsedData2);
@@ -43,4 +43,4 @@ const buildTree = (parsedData1, parsedData2) => {
   return tree;
 };
 
-export default buildTree;
+export default buildAST;

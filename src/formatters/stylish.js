@@ -25,11 +25,11 @@ const makeStylish = (tree, depth = 1) => {
       case 'unchanged':
         return `${indent(depth)}${node.key}: ${formatValue(node.value, depth + 1)}`;
       case 'updated':
-        return `${indent(depth)}- ${node.key}: ${formatValue(node.value, depth + 1)}\n${indent(depth)}+ ${node.key}: ${formatValue(node.newValue, depth + 1)}`;
+        return `${indent(depth).slice(0, -2)}- ${node.key}: ${formatValue(node.value, depth + 1)}\n${indent(depth).slice(0, -2)}+ ${node.key}: ${formatValue(node.newValue, depth + 1)}`;
       case 'removed':
-        return `${indent(depth)}- ${node.key}: ${formatValue(node.value, depth + 1)}`;
+        return `${indent(depth).slice(0, -2)}- ${node.key}: ${formatValue(node.value, depth + 1)}`;
       case 'added':
-        return `${indent(depth)}+ ${node.key}: ${formatValue(node.value, depth + 1)}`;
+        return `${indent(depth).slice(0, -2)}+ ${node.key}: ${formatValue(node.value, depth + 1)}`;
       default:
         throw new Error(`Unknown type: ${node.type}`);
     }

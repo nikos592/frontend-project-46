@@ -5,9 +5,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const readFile = (filename) => {
+const readAndParseFile = (filename) => {
   const fullPath = path.resolve(__dirname, '../__tests__/__fixtures__', filename);
-  return readFileSync(fullPath, 'utf-8');
+  const fileData = readFileSync(fullPath, 'utf-8');
+  const extName = path.extname(filename);
+  return { fileData, extName };
 };
 
-export default readFile;
+export default readAndParseFile;
